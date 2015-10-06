@@ -35,6 +35,8 @@ class RegisterView{
                 $message .= "Username has too few characters, at least 3 characters.";
             if(strlen($this->getPassword()) < 6)
                 $message .= "Password has too few characters, at least 6 characters.";
+            if($this->getPassword() !== $this->getPasswordRepeat())
+                $message .= "Passwords do not match.";
         }
         return $this->generateRegisterForm($message);
     }
@@ -69,6 +71,11 @@ class RegisterView{
     public function getPassword(){
         if(isset($_POST[self::$password])){
             return $_POST[self::$password];
+        }
+    }
+    public function getPasswordRepeat(){
+        if(isset($_POST[self::$passwordRepeat])){
+            return $_POST[self::$passwordRepeat];
         }
     }
     public function registerBottomClicked(){
