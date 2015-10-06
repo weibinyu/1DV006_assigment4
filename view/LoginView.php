@@ -1,13 +1,14 @@
 <?php
 /**
-  * Solution for assignment 2
-  * @author Daniel Toll
-  */
+ * Solution for assignment 2
+ * @author Daniel Toll
+ */
 class LoginView {
 	/**
 	 * These names are used in $_POST
 	 * @var string
 	 */
+	//for login and logout
 	private static $login = "LoginView::Login";
 	private static $logout = "LoginView::Logout";
 	private static $name = "LoginView::UserName";
@@ -16,6 +17,12 @@ class LoginView {
 	private static $CookiePassword = "LoginView::CookiePassword";
 	private static $keep = "LoginView::KeepMeLoggedIn";
 	private static $messageId = "LoginView::Message";
+	//for register part
+	private static $registerURL = "register";
+	private static $register = "RegisterView::Register";
+	private static $user ="RegisterView::Username";
+	private static $pass = "RegisterView::RegisterPassword";
+	private static $passRepeat = "RegisterView::RegisterPasswordRepeat";
 
 	/**
 	 * This name is used in session
@@ -47,21 +54,21 @@ class LoginView {
 	/**
 	 * accessor method for login attempts
 	 * both by cookie and by form
-	 * 
+	 *
 	 * @return boolean true if user did try to login
 	 */
 	public function userWantsToLogin() {
-		return isset($_POST[self::$login]) || 
-			   isset($_COOKIE[self::$cookieName]);
+		return isset($_POST[self::$login]) ||
+		isset($_COOKIE[self::$cookieName]);
 	}
 
 	/**
 	 * Accessor method for logout events
-	 * 
+	 *
 	 * @return boolean true if user tried to logout
 	 */
 	public function userWantsToLogout() {
-		return isset($_POST[self::$logout]);	
+		return isset($_POST[self::$logout]);
 	}
 
 	/**
@@ -70,9 +77,9 @@ class LoginView {
 	 */
 	public function getCredentials() {
 		return new UserCredentials($this->getUserName(),
-									$this->getPassword(),
-									$this->getTempPassword(),
-									$this->getUserClient());
+			$this->getPassword(),
+			$this->getTempPassword(),
+			$this->getUserClient());
 	}
 
 	public function getUserClient() {
@@ -103,7 +110,7 @@ class LoginView {
 	 * call this when user logged out
 	 */
 	public function setUserLogout() {
-		$this->userDidLogout = true;	
+		$this->userDidLogout = true;
 	}
 
 	/**
@@ -116,7 +123,9 @@ class LoginView {
 	public function response() {
 		if ($this->model->isLoggedIn($this->getUserClient())) {
 			return $this->doLogoutForm();
-		} else {
+		} elseif($this->userClickedOnRegister()){
+			return $this->doRegisterForm();
+		}else {
 			return $this->doLoginForm();
 		}
 	}
@@ -141,12 +150,12 @@ class LoginView {
 			$this->redirect($message);
 		} else {
 			$message = $this->getSessionMessage();
-			
+
 		}
 
 		//Set new cookies
 		if ($this->rememberMe()) {
-			$this->setNewTemporaryPassword(); 
+			$this->setNewTemporaryPassword();
 		} else {
 			$this->unsetCookies();
 		}
@@ -179,7 +188,7 @@ class LoginView {
 
 		//cookies
 		$this->unsetCookies();
-		
+
 		//generate HTML
 		return $this->generateLoginFormHTML($message);
 	}
@@ -274,7 +283,41 @@ class LoginView {
 	}
 
 	private function rememberMe() {
-		return isset($_POST[self::$keep]) || 
-			   isset($_COOKIE[self::$CookiePassword]);
+		return isset($_POST[self::$keep]) ||
+		isset($_COOKIE[self::$CookiePassword]);
+	}
+	//register codes from here on
+	public function userClickedOnRegister(){
+		return isset($_GET[self::$registerURL]);
+	}
+	public function getRegisterLink(){
+		return '<a href="?' . self::$registerURL . '">Register a new user</a>';
+	}
+	public function getLoginLink(){
+		return '<a href="?">Back to login</a>';
+	}
+	private function doRegisterForm(){
+		$message = "";
+		return $this->generateRegisterForm($message);
+	}
+	private function generateRegisterForm($message){
+		return '<h2>Register new user</h2>
+                <form action="?register" method="post" enctype="multipart/form-data">
+                    <fieldset>
+                    <legend>Register a new user - Write username and password</legend>
+                        <p id="'.self::$messageId.'">'.$message.'</p>
+                        <label for="'.self::$user.'">Username :</label>
+                        <input type="text" size="15" name="'.self::$user.'" id="'.self::$user.'" value="'.$this->getUserName().'">
+                        <br>
+                        <label for="'.self::$pass.'">Password  :</label>
+                        <input type="password" size="15" name="'.self::$pass.'" id="'.self::$pass.'" value="">
+                        <br>
+                        <label for="'.self::$passRepeat.'">Repeat password  :</label>
+                        <input type="password" size="15" name="'.self::$passRepeat.'" id="'.self::$passRepeat.'" value="">
+                        <br>
+                        <input id="submit" type="submit" name="'.self::$register.'" value="Register">
+                        <br>
+                    </fieldset>
+                </form>';
 	}
 }
