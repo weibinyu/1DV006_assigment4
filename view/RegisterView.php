@@ -11,8 +11,8 @@ class RegisterView{
     private static $register = "RegisterView::Register";
     private static $message = "RegisterView::Message";
     private static $user ="RegisterView::UserName";
-    private static $pass = "RegisterView::Password";
-    private static $passRepeat = "RegisterView::PasswordRepeat";
+    private static $password = "RegisterView::Password";
+    private static $passwordRepeat = "RegisterView::PasswordRepeat";
     private static $sessionSaveLocation;
 
     public function __construct() {
@@ -30,6 +30,12 @@ class RegisterView{
     }
     private function doRegisterForm(){
         $message = "";
+        if($this-> registerBottomClicked()){
+            if(strlen($this->getUserName()) < 3)
+                $message .= "Username has too few characters, at least 3 characters.";
+            if(strlen($this->getPassword()) < 6)
+                $message .= "Password has too few characters, at least 6 characters.";
+        }
         return $this->generateRegisterForm($message);
     }
     private function generateRegisterForm($message){
@@ -41,11 +47,11 @@ class RegisterView{
                         <label for="'.self::$user.'">Username :</label>
                         <input type="text" size="15" name="'.self::$user.'" id="'.self::$user.'" value="'.$this->getUserName().'">
                         <br>
-                        <label for="'.self::$pass.'">Password  :</label>
-                        <input type="password" size="15" name="'.self::$pass.'" id="'.self::$pass.'" value="">
+                        <label for="'.self::$password.'">Password  :</label>
+                        <input type="password" size="15" name="'.self::$password.'" id="'.self::$password.'" value="">
                         <br>
-                        <label for="'.self::$passRepeat.'">Repeat password  :</label>
-                        <input type="password" size="15" name="'.self::$passRepeat.'" id="'.self::$passRepeat.'" value="">
+                        <label for="'.self::$passwordRepeat.'">Repeat password  :</label>
+                        <input type="password" size="15" name="'.self::$passwordRepeat.'" id="'.self::$passwordRepeat.'" value="">
                         <br>
                         <input id="submit" type="submit" name="'.self::$register.'" value="Register">
                         <br>
@@ -59,5 +65,13 @@ class RegisterView{
         if(isset($_POST[self::$user])){
             return $_POST[self::$user];
         }
+    }
+    public function getPassword(){
+        if(isset($_POST[self::$password])){
+            return $_POST[self::$password];
+        }
+    }
+    public function registerBottomClicked(){
+        return isset($_POST[self::$register]);
     }
 }
