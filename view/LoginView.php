@@ -17,13 +17,6 @@ class LoginView {
 	private static $CookiePassword = "LoginView::CookiePassword";
 	private static $keep = "LoginView::KeepMeLoggedIn";
 	private static $messageId = "LoginView::Message";
-	//for register part
-	private static $registerURL = "register";
-	private static $register = "RegisterView::Register";
-	private static $user ="RegisterView::Username";
-	private static $pass = "RegisterView::RegisterPassword";
-	private static $passRepeat = "RegisterView::RegisterPasswordRepeat";
-
 	/**
 	 * This name is used in session
 	 * @var string
@@ -123,9 +116,7 @@ class LoginView {
 	public function response() {
 		if ($this->model->isLoggedIn($this->getUserClient())) {
 			return $this->doLogoutForm();
-		} elseif($this->userClickedOnRegister()){
-			return $this->doRegisterForm();
-		}else {
+		} else {
 			return $this->doLoginForm();
 		}
 	}
@@ -286,38 +277,5 @@ class LoginView {
 		return isset($_POST[self::$keep]) ||
 		isset($_COOKIE[self::$CookiePassword]);
 	}
-	//register codes from here on
-	public function userClickedOnRegister(){
-		return isset($_GET[self::$registerURL]);
-	}
-	public function getRegisterLink(){
-		return '<a href="?' . self::$registerURL . '">Register a new user</a>';
-	}
-	public function getLoginLink(){
-		return '<a href="?">Back to login</a>';
-	}
-	private function doRegisterForm(){
-		$message = "";
-		return $this->generateRegisterForm($message);
-	}
-	private function generateRegisterForm($message){
-		return '<h2>Register new user</h2>
-                <form action="?register" method="post" enctype="multipart/form-data">
-                    <fieldset>
-                    <legend>Register a new user - Write username and password</legend>
-                        <p id="'.self::$messageId.'">'.$message.'</p>
-                        <label for="'.self::$user.'">Username :</label>
-                        <input type="text" size="15" name="'.self::$user.'" id="'.self::$user.'" value="'.$this->getUserName().'">
-                        <br>
-                        <label for="'.self::$pass.'">Password  :</label>
-                        <input type="password" size="15" name="'.self::$pass.'" id="'.self::$pass.'" value="">
-                        <br>
-                        <label for="'.self::$passRepeat.'">Repeat password  :</label>
-                        <input type="password" size="15" name="'.self::$passRepeat.'" id="'.self::$passRepeat.'" value="">
-                        <br>
-                        <input id="submit" type="submit" name="'.self::$register.'" value="Register">
-                        <br>
-                    </fieldset>
-                </form>';
-	}
+
 }
