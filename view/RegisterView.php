@@ -37,6 +37,12 @@ class RegisterView{
                 $message .= "Password has too few characters, at least 6 characters.";
             if($this->getPassword() !== $this->getPasswordRepeat())
                 $message .= "Passwords do not match.";
+            //tempory solution,does not work when user are more than one
+            //TODO: handle this else every with other solution
+            if($this->getUserName() === Settings::USERNAME){
+                $message .= "User exists, pick another username.";
+            }
+
         }
         return $this->generateRegisterForm($message);
     }
